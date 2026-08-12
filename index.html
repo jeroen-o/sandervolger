@@ -290,6 +290,18 @@
     border-radius:var(--radius);padding:12px 14px;font-size:.8rem;color:var(--hv-navy);margin-bottom:16px}
   .netto-uitleg.open{display:block}
   .verval-noot{font-size:.75rem;color:#B3541E;margin-top:8px}
+  /* ---------- Tabbladen ---------- */
+  .tabs{display:flex;gap:8px;margin-bottom:16px}
+  .tab{flex:0 0 auto;background:#fff;color:var(--hv-blauw);border:1px solid var(--hv-lijn);
+    border-radius:8px;padding:10px 20px;font-size:.9rem;font-weight:700;cursor:pointer}
+  .tab.actief{background:var(--hv-blauw);color:#fff;border-color:var(--hv-blauw)}
+  .tab:not(.actief):hover{background:var(--hv-blauw-licht)}
+  .fin-rij{display:flex;justify-content:space-between;padding:6px 0;border-top:1px dashed var(--hv-lijn);font-size:.85rem}
+  .fin-rij dt{color:var(--hv-grijs)}
+  .fin-rij dd{font-weight:600}
+  .fin-totaal{border-top:2px solid var(--hv-blauw);font-weight:800}
+  .fin-waarschuwing{background:#FFF3EC;border:1px solid #F2CFC8;border-radius:8px;
+    padding:10px 12px;font-size:.8rem;color:#B3541E;margin-top:12px}
   /* ---------- Mobiel ---------- */
   @media(max-width:560px){
     body{padding:14px 10px 48px}
@@ -307,6 +319,7 @@
     .deel{padding:11px}
     th,td{padding:6px 7px;font-size:.78rem}
     .sectie-kop{align-items:flex-start}
+    .tabs .tab{flex:1;padding:10px 6px;font-size:.82rem}
   }
 </style>
 </head>
@@ -320,6 +333,11 @@
     <div class="logo-badge"><img src="data:image/jpeg;base64,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" alt="Hypotheek Visie — Je woont toch om te leven!"></div>
   </header>
 
+  <div class="tabs">
+    <button type="button" class="tab actief" id="tabBtnMaand">Maandlasten</button>
+    <button type="button" class="tab" id="tabBtnFin">Financieringsopzet</button>
+  </div>
+  <div id="paneelMaand">
   <div class="grid">
     <!-- INVOER -->
     <div class="card">
@@ -392,6 +410,52 @@
       <div id="resultaten"><div class="card"><div class="leeg">Voeg leningdelen toe en klik op <strong>Bereken maandlasten</strong>.</div></div></div>
     </div>
   </div>
+  </div>
+
+  <div id="paneelFin" style="display:none">
+    <div class="grid">
+      <div class="card">
+        <div class="btn-rij" style="margin:0 0 16px">
+          <button type="button" class="btn-sec" id="btnNieuwFin">Nieuwe berekening</button>
+          <button type="button" class="btn-sec" id="btnDownloadFin">Downloaden</button>
+          <button type="button" class="btn-sec" id="btnUploadFin">Uploaden</button>
+          <button type="button" class="btn-sec" id="btnMailFin">Verstuur per e-mail</button>
+        </div>
+        <h2>Aankoop &amp; kosten</h2>
+        <div class="rij2">
+          <div><label for="fKoopsom">Koopsom woning</label><div class="euro-wrap"><input type="text" id="fKoopsom" inputmode="numeric" value="300.000"></div></div>
+          <div><label for="fVerbouwing">Verbouwing / meerwerk</label><div class="euro-wrap"><input type="text" id="fVerbouwing" inputmode="numeric" value="0"></div><div class="hint">Vaak mee te financieren via een bouwdepot</div></div>
+          <div><label for="fRoerend">Roerende zaken</label><div class="euro-wrap"><input type="text" id="fRoerend" inputmode="numeric" value="0"></div><div class="hint">Niet mee te financieren in de hypotheek</div></div>
+          <div><label for="fOdb">Overdrachtsbelasting (%)</label><input type="text" id="fOdb" inputmode="decimal" value="2"><div class="hint">Starters 18–34 jaar: mogelijk 0% (vrijstelling)</div></div>
+          <div><label for="fNotaris">Notariskosten</label><div class="euro-wrap"><input type="text" id="fNotaris" inputmode="numeric" value="2.150"></div></div>
+          <div><label for="fTaxatie">Taxatie</label><div class="euro-wrap"><input type="text" id="fTaxatie" inputmode="numeric" value="1.050"></div></div>
+          <div><label for="fMakelaar">Aankoopmakelaar</label><div class="euro-wrap"><input type="text" id="fMakelaar" inputmode="numeric" value="0"></div></div>
+          <div><label for="fAdvies">Hypotheekadvies &amp; bemiddeling</label><div class="euro-wrap"><input type="text" id="fAdvies" inputmode="numeric" value="5.000"></div></div>
+          <div><label for="fGarantie">Bankgarantie / waarborg</label><div class="euro-wrap"><input type="text" id="fGarantie" inputmode="numeric" value="0"></div></div>
+          <div><label for="fKeuring">Bouwkundige keuring</label><div class="euro-wrap"><input type="text" id="fKeuring" inputmode="numeric" value="0"></div></div>
+          <div><label for="fBieden">Bieden met zekerheid</label><div class="euro-wrap"><input type="text" id="fBieden" inputmode="numeric" value="0"></div><div class="hint">Financiële check vooraf om zonder voorbehoud te kunnen bieden</div></div>
+          <div><label for="fOversluit">Oversluitkosten (boeterente, royement)</label><div class="euro-wrap"><input type="text" id="fOversluit" inputmode="numeric" value="0"></div></div>
+          <div><label for="fErfpacht">Afkoop erfpacht</label><div class="euro-wrap"><input type="text" id="fErfpacht" inputmode="numeric" value="0"></div></div>
+          <div><label for="fDubbel">Reservering dubbele lasten</label><div class="euro-wrap"><input type="text" id="fDubbel" inputmode="numeric" value="0"></div><div class="hint">Benodigd eigen geld voor de overbruggingsperiode met dubbele woonlasten</div></div>
+          <div><label for="fOverig">Overige kosten</label><div class="euro-wrap"><input type="text" id="fOverig" inputmode="numeric" value="0"></div></div>
+        </div>
+        <label class="check"><input type="checkbox" id="fNhg"> NHG (borgtochtprovisie 0,4% over het hypotheekbedrag)</label>
+        <div class="hint">NHG-kostengrens 2026: € 470.000 (€ 498.200 met energiebesparende voorzieningen); provisie is fiscaal aftrekbaar</div>
+        <h2 style="margin-top:22px">Financiering (beschikbaar)</h2>
+        <div class="rij2">
+          <div><label for="fOverwaarde">Overwaarde huidige woning</label><div class="euro-wrap"><input type="text" id="fOverwaarde" inputmode="numeric" value="0"></div></div>
+          <div><label for="fSchenking">Schenking</label><div class="euro-wrap"><input type="text" id="fSchenking" inputmode="numeric" value="0"></div></div>
+          <div><label for="fEigenGeld">Inbreng eigen geld</label><div class="euro-wrap"><input type="text" id="fEigenGeld" inputmode="numeric" value="0"></div></div>
+        </div>
+        <div class="hint" style="margin-top:10px">Het hypotheekbedrag is de som van de leningdelen op het tabblad Maandlasten.</div>
+        <button type="button" class="btn-klein" id="btnHypGelijk" style="margin-top:10px">Stel hypotheek (leningdeel 1) gelijk aan het benodigde bedrag</button>
+        <button type="button" class="btn-primair" id="btnBerekenFin">Bereken financieringsopzet</button>
+        <button type="button" class="btn-print" id="btnPrintFin">Afdrukken / PDF</button>
+      </div>
+      <div><div class="card" id="finResultaat"><div class="leeg">Vul de aankoopgegevens in en klik op <strong>Bereken financieringsopzet</strong>.</div></div></div>
+    </div>
+  </div>
+
 
 
   <section class="card" style="margin-top:20px" id="over">
@@ -687,15 +751,17 @@
       tot.push({bruto:bruto,netto:bruto-voordeel,voordeel:voordeel,rente:rente,afl:afl,saldo:saldo});
     }
 
-    laatste={delen:delen,tot:tot,nMax:nMax,woz:woz,inkomen:inkomen,aow:aow,
+    var totB=delen.reduce(function(a2,d2){return a2+d2.bedrag;},0);
+    laatste={delen:delen,tot:tot,nMax:nMax,woz:woz,inkomen:inkomen,aow:aow,fin:berekenFin(totB),
              marginaal:marginaal,aftrekTarief:aftrekTarief,ewfJaar:ewfJaar,ewfLabel:ewf.label,
-             totBedrag:delen.reduce(function(a,d){return a+d.bedrag;},0),
+             totBedrag:totB,
              klantNaam:document.getElementById("klantNaam").value.trim(),
              klantAdres:[document.getElementById("klantStraat").value.trim(),
                          [document.getElementById("klantPostcode").value.trim(),
                           document.getElementById("klantPlaats").value.trim()].filter(Boolean).join(" ")
                         ].filter(Boolean).join(", ")};
     toon();
+    toonFin();
   }
 
   function periodeGrenzen(segs,lt){
@@ -930,6 +996,28 @@
       if(cR){tekenChart(2,1200);chartRestImg=cR.toDataURL("image/png");tekenChart();}
       if(cL){tekenChartLast(2,1200);chartLastImg=cL.toDataURL("image/png");tekenChartLast();}
     }catch(e){}
+    var finHtml="";
+    if(d.fin&&(d.fin.koopsom>0||d.fin.verbouwing>0)){
+      var f=d.fin;
+      var finRij=function(l,v){return v>0?"<tr><td>"+l+"</td><td>"+eur0(v)+"</td></tr>":"";};
+      finHtml="<h2>Financieringsopzet</h2><table><thead><tr><th>Benodigd (investering)</th><th></th></tr></thead><tbody>"+
+        finRij("Koopsom woning",f.koopsom)+finRij("Verbouwing / meerwerk",f.verbouwing)+finRij("Roerende zaken",f.roerend)+
+        finRij("Overdrachtsbelasting ("+fmtNum.format(f.odbPct)+"%)",f.odb)+
+        finRij("Notariskosten",f.notaris)+finRij("Taxatie",f.taxatie)+finRij("Aankoopmakelaar",f.makelaar)+
+        finRij("Hypotheekadvies en bemiddeling",f.advies)+finRij("Bankgarantie / waarborg",f.garantie)+
+        finRij("Bouwkundige keuring",f.keuring)+finRij("Bieden met zekerheid",f.bieden)+
+        finRij("Oversluitkosten (boeterente, royement)",f.oversluit)+finRij("Afkoop erfpacht",f.erfpacht)+
+        finRij("NHG-borgtochtprovisie (0,4%)",f.nhgBedrag)+
+        finRij("Reservering dubbele lasten",f.dubbel)+finRij("Overige kosten",f.overig)+
+        "<tr><td><strong>Totaal benodigd</strong></td><td><strong>"+eur0(f.totaal)+"</strong></td></tr>"+
+        "</tbody></table>"+
+        "<table style='margin-top:10px'><thead><tr><th>Financiering (beschikbaar)</th><th></th></tr></thead><tbody>"+
+        "<tr><td>Hypotheek (som leningdelen)</td><td>"+eur0(f.hyp)+"</td></tr>"+
+        finRij("Overwaarde huidige woning",f.overwaarde)+finRij("Schenking",f.schenking)+finRij("Inbreng eigen geld",f.eigenGeld)+
+        "<tr><td><strong>Totaal beschikbaar</strong></td><td><strong>"+eur0(f.beschikbaar)+"</strong></td></tr>"+
+        "<tr><td><strong>"+(f.saldo>=0?"Overschot / buffer":"Aanvullend eigen geld nodig")+"</strong></td><td><strong>"+eur0(Math.abs(f.saldo))+"</strong></td></tr>"+
+        "</tbody></table><div class='fisc'>Hypotheek t.o.v. waarde (koopsom + verbouwing): "+pct(Math.round(f.ltv*10)/10)+". Roerende zaken en kosten zijn doorgaans niet mee te financieren boven de woningwaarde.</div>";
+    }
     var logoSrc=document.querySelector(".logo-badge img").src;
     var fotoSrc=document.querySelector(".adviseur img").src;
     var html="<!DOCTYPE html><html lang='nl'><head><meta charset='utf-8'><title>"+pdfTitel+"</title><style>"+
@@ -976,6 +1064,7 @@
       "<div><div class='l'>Restschuld einde</div><div class='v'>"+eur0(d.tot[d.nMax-1].saldo)+"</div></div></div>"+
       "<h2>Leningdelen</h2><table><thead><tr><th>Deel</th><th>Vorm</th><th>Bedrag</th><th>Looptijd</th><th>Rentevaste periodes</th><th>Aftrek</th><th>1e bruto p/m</th><th>Restschuld</th></tr></thead><tbody>"+delenRows+"</tbody></table>"+
       "<div class='fisc'>Netto o.b.v. "+(d.aow?"tarieven vanaf AOW-leeftijd":"tarieven tot AOW-leeftijd")+", aftrektarief "+pct(d.aftrekTarief*100)+" en eigenwoningforfait "+eur0(d.ewfJaar)+" per jaar (wettelijke staffel: "+d.ewfLabel+").</div>"+
+      finHtml+
       (chartRestImg?"<h2>Restschuldverloop</h2><img class='chart' src='"+chartRestImg+"' alt='Restschuldverloop'><div class='chartleg'>Donkerblauwe lijn: totale restschuld &middot; gekleurde lijnen: per leningdeel</div>":"")+
       (chartLastImg?"<h2>Maandlastenverloop</h2><img class='chart' src='"+chartLastImg+"' alt='Maandlastenverloop'><div class='chartleg'>Donkerblauw: bruto maandlast &middot; rood: netto indicatief per maand &middot; gestippeld rood: einde renteaftrek</div>":"")+
       "<h2>Jaaroverzicht</h2><table><thead><tr><th>Jaar</th><th>Bruto p/m</th><th>Netto indicatief p/m</th><th>Restschuld eind</th></tr></thead><tbody>"+jaarRows+"</tbody></table>"+(vvNoot?"<div class='fisc'>"+vvNoot+"</div>":"")+
@@ -996,6 +1085,79 @@
   document.getElementById("btnBereken").addEventListener("click",bereken);
   document.getElementById("btnPrint").addEventListener("click",printRapport);
 
+
+  /* ---------- Financieringsopzet ---------- */
+  ["fKoopsom","fVerbouwing","fRoerend","fNotaris","fTaxatie","fMakelaar","fAdvies","fGarantie","fKeuring","fBieden","fOversluit","fErfpacht","fDubbel","fOverig","fOverwaarde","fSchenking","fEigenGeld"].forEach(function(id){
+    koppelEuroInput(document.getElementById(id));
+  });
+  function berekenFin(hyp){
+    function fv(id){var v=parseNL(document.getElementById(id).value);return isNaN(v)?0:v;}
+    var f={koopsom:fv("fKoopsom"),verbouwing:fv("fVerbouwing"),roerend:fv("fRoerend"),odbPct:fv("fOdb"),
+      notaris:fv("fNotaris"),taxatie:fv("fTaxatie"),makelaar:fv("fMakelaar"),
+      advies:fv("fAdvies"),garantie:fv("fGarantie"),keuring:fv("fKeuring"),
+      bieden:fv("fBieden"),oversluit:fv("fOversluit"),erfpacht:fv("fErfpacht"),
+      dubbel:fv("fDubbel"),overig:fv("fOverig"),
+      overwaarde:fv("fOverwaarde"),schenking:fv("fSchenking"),eigenGeld:fv("fEigenGeld"),
+      nhg:document.getElementById("fNhg").checked,hyp:hyp};
+    f.odb=Math.round(f.koopsom*f.odbPct/100);
+    f.nhgBedrag=f.nhg?Math.round(hyp*0.004):0;
+    f.kosten=f.odb+f.notaris+f.taxatie+f.makelaar+f.advies+f.garantie+f.keuring+f.bieden+f.oversluit+f.erfpacht+f.nhgBedrag+f.overig;
+    f.nhgGrensOver=f.nhg&&(f.koopsom+f.verbouwing)>470000;
+    f.totaal=f.koopsom+f.verbouwing+f.roerend+f.dubbel+f.kosten;
+    f.beschikbaar=hyp+f.overwaarde+f.schenking+f.eigenGeld;
+    f.saldo=f.beschikbaar-f.totaal;
+    f.waarde=f.koopsom+f.verbouwing;
+    f.ltv=f.waarde>0?hyp/f.waarde*100:0;
+    return f;
+  }
+  function stelHypGelijk(){
+    var f=berekenFin(0);
+    var basis=f.totaal-(f.overwaarde+f.schenking+f.eigenGeld);
+    var hyp=f.nhg?Math.ceil(basis/(1-0.004)):Math.ceil(basis);
+    if(hyp<=0){alert("De inbreng (overwaarde, schenking en eigen geld) dekt het volledige bedrag; er is geen hypotheek nodig.");return;}
+    var eerste=delenEl.querySelector(".d-bedrag");
+    if(eerste){eerste.value=fmtNum.format(hyp);wozHandmatig=false;updateWozDefault();}
+    bereken();toonTab("fin");
+  }
+  function toonFin(){
+    if(!laatste||!laatste.fin)return;
+    var f=laatste.fin;
+    function rij(l,v,cls){return v>0||cls?'<div class="fin-rij '+(cls||'')+'"><dt>'+l+'</dt><dd>'+eur0(v)+'</dd></div>':'';}
+    var html='<h2>Financieringsopzet</h2>'+
+      '<h3 style="font-size:.85rem;margin:6px 0 4px;color:var(--hv-navy)">Benodigd (investering)</h3>'+
+      rij("Koopsom woning",f.koopsom)+rij("Verbouwing / meerwerk",f.verbouwing)+rij("Roerende zaken",f.roerend)+
+      rij("Overdrachtsbelasting ("+fmtNum.format(f.odbPct)+"%)",f.odb)+
+      rij("Notariskosten",f.notaris)+rij("Taxatie",f.taxatie)+rij("Aankoopmakelaar",f.makelaar)+
+      rij("Hypotheekadvies &amp; bemiddeling",f.advies)+rij("Bankgarantie / waarborg",f.garantie)+
+      rij("Bouwkundige keuring",f.keuring)+rij("Bieden met zekerheid",f.bieden)+
+      rij("Oversluitkosten (boeterente, royement)",f.oversluit)+rij("Afkoop erfpacht",f.erfpacht)+
+      rij("NHG-borgtochtprovisie (0,4%)",f.nhgBedrag)+
+      rij("Reservering dubbele lasten",f.dubbel)+rij("Overige kosten",f.overig)+
+      rij("Totaal benodigd",f.totaal,"fin-totaal")+
+      '<h3 style="font-size:.85rem;margin:18px 0 4px;color:var(--hv-navy)">Financiering (beschikbaar)</h3>'+
+      rij("Hypotheek (som leningdelen)",f.hyp," ")+
+      rij("Overwaarde huidige woning",f.overwaarde)+rij("Schenking",f.schenking)+rij("Inbreng eigen geld",f.eigenGeld)+
+      rij("Totaal beschikbaar",f.beschikbaar,"fin-totaal")+
+      (f.saldo>=0?rij("Overschot / buffer",f.saldo,"fin-totaal"):rij("Aanvullend eigen geld nodig",-f.saldo,"fin-totaal"))+
+      '<div class="fin-rij"><dt>Totale kosten (excl. koopsom, verbouwing, roerend en dubbele lasten)</dt><dd>'+eur0(f.kosten)+'</dd></div>'+
+      '<div class="fin-rij"><dt>Hypotheek t.o.v. waarde (koopsom + verbouwing)</dt><dd>'+pct(Math.round(f.ltv*10)/10)+'</dd></div>';
+    if(f.saldo<0)html+='<div class="fin-waarschuwing">Er is '+eur0(-f.saldo)+' aanvullend eigen geld nodig. Verhoog de inbreng, verlaag de kosten of gebruik de knop om de hypotheek gelijk te stellen aan het benodigde bedrag.</div>';
+    if(f.roerend>0)html+='<div class="fin-waarschuwing">Roerende zaken zijn doorgaans niet mee te financieren in de hypotheek en komen uit eigen middelen.</div>';
+    if(f.nhgGrensOver)html+='<div class="fin-waarschuwing">Koopsom plus verbouwing ('+eur0(f.koopsom+f.verbouwing)+') ligt boven de NHG-kostengrens van \u20ac 470.000 \u2014 NHG is dan doorgaans niet mogelijk (\u20ac 498.200 bij energiebesparende voorzieningen).</div>';
+    if(f.ltv>100)html+='<div class="fin-waarschuwing">De hypotheek is hoger dan 100% van de waarde. Financieren boven de woningwaarde is doorgaans niet mogelijk; kosten koper moeten uit eigen middelen komen.</div>';
+    document.getElementById("finResultaat").innerHTML=html;
+  }
+  function toonTab(w){
+    document.getElementById("paneelMaand").style.display=w==="maand"?"":"none";
+    document.getElementById("paneelFin").style.display=w==="fin"?"":"none";
+    document.getElementById("tabBtnMaand").classList.toggle("actief",w==="maand");
+    document.getElementById("tabBtnFin").classList.toggle("actief",w==="fin");
+    if(w==="maand"&&laatste){tekenChart();tekenChartLast();}
+  }
+  document.getElementById("tabBtnMaand").addEventListener("click",function(){toonTab("maand");});
+  document.getElementById("tabBtnFin").addEventListener("click",function(){toonTab("fin");});
+  document.getElementById("btnBerekenFin").addEventListener("click",bereken);
+
   /* ---------- Nieuwe berekening (alles wissen) ---------- */
   var defaults={naam:"Sander Volger",straat:"Buikslotermeerplein 158",postcode:"1025 EZ",plaats:"Amsterdam",
     inkomen:"65.000",fT1:"35,75",fT1aow:"17,85",fT2:"37,56",fGrens1:"38.883",fMaxAftrek:"37,56"};
@@ -1014,6 +1176,14 @@
     delenEl.innerHTML="";
     wozHandmatig=false;
     nieuwDeel({bedrag:"300.000",vorm:"ann",rvps:[{j:10,r:"3,90"},{j:20,r:"4,30"}]});
+    var finDef={fKoopsom:"300.000",fVerbouwing:"0",fRoerend:"0",fOdb:"2",fNotaris:"2.150",fTaxatie:"1.050",
+      fMakelaar:"0",fAdvies:"5.000",fGarantie:"0",fKeuring:"0",fBieden:"0",fOversluit:"0",fErfpacht:"0",
+      fDubbel:"0",fOverig:"0",fOverwaarde:"0",fSchenking:"0",fEigenGeld:"0"};
+    Object.keys(finDef).forEach(function(k){document.getElementById(k).value=finDef[k];});
+    document.getElementById("fNhg").checked=false;
+    document.getElementById("finResultaat").innerHTML=
+      '<div class="leeg">Vul de aankoopgegevens in en klik op <strong>Bereken financieringsopzet</strong>.</div>';
+    toonTab("maand");
     laatste=null;
     document.getElementById("foutBox").style.display="none";
     document.getElementById("resultaten").innerHTML=
@@ -1049,7 +1219,17 @@
       fiscaal:{t1:document.getElementById("fT1").value,t1aow:document.getElementById("fT1aow").value,
                t2:document.getElementById("fT2").value,grens1:document.getElementById("fGrens1").value,
                maxAftrek:document.getElementById("fMaxAftrek").value},
-      delen:delen
+      delen:delen,
+      fin:{koopsom:document.getElementById("fKoopsom").value,verbouwing:document.getElementById("fVerbouwing").value,
+        odb:document.getElementById("fOdb").value,notaris:document.getElementById("fNotaris").value,
+        taxatie:document.getElementById("fTaxatie").value,makelaar:document.getElementById("fMakelaar").value,
+        advies:document.getElementById("fAdvies").value,garantie:document.getElementById("fGarantie").value,
+        keuring:document.getElementById("fKeuring").value,bieden:document.getElementById("fBieden").value,
+        roerend:document.getElementById("fRoerend").value,oversluit:document.getElementById("fOversluit").value,
+        erfpacht:document.getElementById("fErfpacht").value,dubbel:document.getElementById("fDubbel").value,
+        overwaarde:document.getElementById("fOverwaarde").value,schenking:document.getElementById("fSchenking").value,
+        eigenGeld:document.getElementById("fEigenGeld").value,overig:document.getElementById("fOverig").value,
+        nhg:document.getElementById("fNhg").checked}
     };
   }
   function bestandsnaam(){
@@ -1088,6 +1268,14 @@
       d.querySelector(".d-aftrek").checked=!!x.aftrek;
       d.querySelector(".d-aftrekjaren").disabled=!x.aftrek;
     });
+    if(st.fin){
+      var fm={koopsom:"fKoopsom",verbouwing:"fVerbouwing",odb:"fOdb",notaris:"fNotaris",taxatie:"fTaxatie",
+        makelaar:"fMakelaar",advies:"fAdvies",garantie:"fGarantie",keuring:"fKeuring",bieden:"fBieden",
+        roerend:"fRoerend",oversluit:"fOversluit",erfpacht:"fErfpacht",dubbel:"fDubbel",
+        overwaarde:"fOverwaarde",schenking:"fSchenking",eigenGeld:"fEigenGeld",overig:"fOverig"};
+      Object.keys(fm).forEach(function(k){if(st.fin[k]!=null)document.getElementById(fm[k]).value=st.fin[k];});
+      document.getElementById("fNhg").checked=!!st.fin.nhg;
+    }
     if(st.wozHandmatig&&st.woz){wozHandmatig=true;document.getElementById("woz").value=st.woz;}
     bereken();
   }
@@ -1113,6 +1301,14 @@
       r.push("Deel "+x.nr+" - "+vormNaam[x.vorm]+" - "+eur0(x.bedrag)+" - "+x.lt+" jr - "+rvpTxt+" - renteaftrek: "+(x.aftrek?"ja, nog "+x.aftrekJaren+" jr":"nee"));
     });
     r.push("");
+    if(d.fin&&(d.fin.koopsom>0||d.fin.verbouwing>0)){
+      var f2=d.fin;
+      r.push("FINANCIERINGSOPZET");
+      r.push("Totaal benodigd (incl. kosten): "+eur0(f2.totaal));
+      r.push("Hypotheek: "+eur0(f2.hyp)+(f2.overwaarde?" | Overwaarde: "+eur0(f2.overwaarde):"")+(f2.schenking?" | Schenking: "+eur0(f2.schenking):"")+(f2.eigenGeld?" | Eigen geld: "+eur0(f2.eigenGeld):""));
+      r.push(f2.saldo>=0?"Overschot / buffer: "+eur0(f2.saldo):"Aanvullend eigen geld nodig: "+eur0(-f2.saldo));
+      r.push("");
+    }
     r.push("RESULTAAT (eerste maand)");
     r.push("Bruto maandlast: "+eur(d.tot[0].bruto));
     r.push("Netto indicatief per maand: "+eur(d.tot[0].netto));
@@ -1139,6 +1335,16 @@
   document.getElementById("btnUploadTop").addEventListener("click",function(){
     document.getElementById("fileUpload").click();
   });
+  document.getElementById("btnNieuwFin").addEventListener("click",function(){
+    if(confirm("Alle gegevens wissen en opnieuw beginnen?"))resetAlles();
+  });
+  document.getElementById("btnDownloadFin").addEventListener("click",downloadState);
+  document.getElementById("btnUploadFin").addEventListener("click",function(){
+    document.getElementById("fileUpload").click();
+  });
+  document.getElementById("btnMailFin").addEventListener("click",mailBerekening);
+  document.getElementById("btnPrintFin").addEventListener("click",printRapport);
+  document.getElementById("btnHypGelijk").addEventListener("click",stelHypGelijk);
   document.getElementById("btnDownload").addEventListener("click",downloadState);
   document.getElementById("btnUpload").addEventListener("click",function(){
     document.getElementById("fileUpload").click();
