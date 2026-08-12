@@ -794,14 +794,17 @@
     });
   }
 
-  function tekenChart(){
+  function tekenChart(schaal,vasteBreedte){
     var d=laatste,c=document.getElementById("chartRest");
     if(!c||!d)return;
+    schaal=schaal||window.devicePixelRatio||1;
     var ctx=c.getContext("2d");
-    var cw=Math.max(320,Math.floor((c.parentElement&&c.parentElement.clientWidth)||920));
+    var cw=vasteBreedte||Math.max(320,Math.floor((c.parentElement&&c.parentElement.clientWidth)||920));
     var compact=cw<600;
-    c.width=cw;c.height=compact?300:340;
-    var W=c.width,H=c.height,pl=compact?56:76,pr=10,pt=14,pb=32;
+    var Hlog=compact?300:340;
+    c.width=Math.round(cw*schaal);c.height=Math.round(Hlog*schaal);
+    ctx.setTransform(schaal,0,0,schaal,0,0);
+    var W=cw,H=Hlog,pl=compact?56:76,pr=10,pt=14,pb=32;
     ctx.clearRect(0,0,W,H);
     var stapY=Math.max(10000,Math.ceil(d.totBedrag/4/10000)*10000);
     var maxY=stapY*4,n=d.nMax,jaren=Math.round(n/12);
@@ -840,14 +843,17 @@
     ctx.stroke();
   }
 
-  function tekenChartLast(){
+  function tekenChartLast(schaal,vasteBreedte){
     var d=laatste,c=document.getElementById("chartLast");
     if(!c||!d)return;
+    schaal=schaal||window.devicePixelRatio||1;
     var ctx=c.getContext("2d");
-    var cw=Math.max(320,Math.floor((c.parentElement&&c.parentElement.clientWidth)||920));
+    var cw=vasteBreedte||Math.max(320,Math.floor((c.parentElement&&c.parentElement.clientWidth)||920));
     var compact=cw<600;
-    c.width=cw;c.height=compact?280:300;
-    var W=c.width,H=c.height,pl=compact?60:76,pr=10,pt=14,pb=32;
+    var Hlog=compact?280:300;
+    c.width=Math.round(cw*schaal);c.height=Math.round(Hlog*schaal);
+    ctx.setTransform(schaal,0,0,schaal,0,0);
+    var W=cw,H=Hlog,pl=compact?60:76,pr=10,pt=14,pb=32;
     ctx.clearRect(0,0,W,H);
     var maxY=0;
     for(var i=0;i<d.nMax;i++)if(d.tot[i].bruto>maxY)maxY=d.tot[i].bruto;
@@ -920,8 +926,9 @@
       new Date().toLocaleDateString("nl-NL")].filter(Boolean).join(" - ").replace(/,/g,"");
     var chartRestImg="",chartLastImg="";
     try{
-      var cR=document.getElementById("chartRest");if(cR)chartRestImg=cR.toDataURL("image/png");
-      var cL=document.getElementById("chartLast");if(cL)chartLastImg=cL.toDataURL("image/png");
+      var cR=document.getElementById("chartRest"),cL=document.getElementById("chartLast");
+      if(cR){tekenChart(2,1200);chartRestImg=cR.toDataURL("image/png");tekenChart();}
+      if(cL){tekenChartLast(2,1200);chartLastImg=cL.toDataURL("image/png");tekenChartLast();}
     }catch(e){}
     var logoSrc=document.querySelector(".logo-badge img").src;
     var fotoSrc=document.querySelector(".adviseur img").src;
