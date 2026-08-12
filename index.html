@@ -965,6 +965,46 @@
     resizeTimer=setTimeout(function(){if(laatste&&document.getElementById("chartRest"))tekenChart();if(laatste&&document.getElementById("chartLast"))tekenChartLast();},200);
   });
 
+  /* ---------- Gedeelde printbouwstenen ---------- */
+  var PRINT_STYLE=
+      "*{box-sizing:border-box}body{font-family:Segoe UI,Arial,sans-serif;color:#152647;margin:0;font-size:12.5px;line-height:1.45}"+
+      ".band{background:#152647;color:#fff;padding:20px 34px;display:flex;justify-content:space-between;align-items:center}"+
+      ".band .chip{background:#fff;border-radius:6px;padding:8px 14px}.band img{height:36px;display:block}"+
+      ".band h1{font-size:19px;margin:0;font-weight:600}.band .dat{color:#AFC3DA;font-size:11px;margin-top:3px}"+
+      ".inhoud{padding:24px 34px}"+
+      "h2{font-size:13px;margin:22px 0 8px;color:#1E4193;text-transform:uppercase;letter-spacing:.6px;"+
+      "border-bottom:2px solid #E4442F;padding-bottom:4px;display:inline-block}"+
+      ".blokken{display:flex;gap:12px;margin-bottom:6px}"+
+      ".blok{flex:1;border:1px solid #D9E2EC;border-radius:8px;padding:10px 12px;font-size:12px}"+
+      ".blok-t{font-size:9.5px;text-transform:uppercase;letter-spacing:.5px;color:#5C6B75;margin-bottom:4px}"+
+      ".tot{display:flex;gap:12px;margin:10px 0 4px}"+
+      ".tot div{flex:1;border-radius:8px;padding:11px 12px;background:#EAF3FA}"+
+      ".tot div:first-child{border:2px solid #1E4193}"+
+      ".tot .l{font-size:9.5px;text-transform:uppercase;letter-spacing:.5px;color:#5C6B75}"+
+      ".tot .v{font-size:17px;font-weight:800;margin-top:2px;color:#152647}"+
+      "table{width:100%;border-collapse:collapse}td,th{padding:6px 8px;border-bottom:1px solid #E4EBF2;text-align:right;font-size:11.5px}"+
+      "td:first-child,th:first-child{text-align:left}thead th{background:#EAF3FA;color:#1E4193;font-size:10px;text-transform:uppercase;letter-spacing:.4px}"+
+      ".fisc{font-size:10.5px;color:#5C6B75;margin-top:6px}"+
+      "a{color:#1E4193;text-decoration:none}"+
+      ".chart{width:100%;border:1px solid #E4EBF2;border-radius:8px;margin:4px 0 2px}"+
+      ".chartleg{font-size:10px;color:#5C6B75;margin-bottom:4px}"+
+      ".kantoor{display:flex;gap:14px;align-items:center;background:#FBE7E3;border:1px solid #F2CFC8;border-radius:10px;padding:14px 16px;margin-top:26px}"+
+      ".kantoor img{width:74px;height:74px;border-radius:8px;object-fit:cover}"+
+      ".kantoor .kn{font-weight:800;font-size:13.5px}.kantoor .kr{font-size:10.5px;color:#5C6B75;margin-bottom:4px}"+
+      ".kantoor .kd{font-size:11.5px;line-height:1.6}"+
+      ".disc{margin-top:16px;font-size:9.5px;color:#6B5518;background:#FFF8EB;border:1px solid #EAD9AE;padding:10px 12px;border-radius:8px}"+
+      ".slot{text-align:center;font-size:11px;color:#5C6B75;margin:18px 0 26px;font-style:italic}"+
+      "@media print{.band,.tot div,.kantoor,.disc,thead th{-webkit-print-color-adjust:exact;print-color-adjust:exact}}"+
+      "";
+  function printKantoor(fotoSrc){
+    return "<div class='kantoor'><img src='"+fotoSrc+"' alt='Sander Volger'>"+
+      "<div><div class='kn'>Hypotheek Visie Amsterdam Buikslotermeerplein</div>"+
+      "<div class='kr'>Uw adviseur: Sander Volger</div>"+
+      "<div class='kd'>Buikslotermeerplein 158, 1025 EZ Amsterdam &middot; <a href='tel:0206629866'>020 - 662 98 66</a><br>"+
+      "<a href='mailto:amsterdambuikslotermeerplein@hypotheekvisie.nl'>amsterdambuikslotermeerplein@hypotheekvisie.nl</a> &middot; <a href='https://hypotheekvisie.nl/amsterdam-buikslotermeerplein'>hypotheekvisie.nl/amsterdam-buikslotermeerplein</a><br>"+
+      "Maandag t/m vrijdag 09:00 &ndash; 17:30 &middot; buiten kantooruren en zaterdag op afspraak &middot; online advies mogelijk</div></div></div>"+"";
+  }
+
   /* ---------- Print via window.open (Google Sites-proof) ---------- */
   function printRapport(){
     if(!laatste){bereken();if(!laatste)return;}
@@ -996,59 +1036,10 @@
       if(cR){tekenChart(2,1200);chartRestImg=cR.toDataURL("image/png");tekenChart();}
       if(cL){tekenChartLast(2,1200);chartLastImg=cL.toDataURL("image/png");tekenChartLast();}
     }catch(e){}
-    var finHtml="";
-    if(d.fin&&(d.fin.koopsom>0||d.fin.verbouwing>0)){
-      var f=d.fin;
-      var finRij=function(l,v){return v>0?"<tr><td>"+l+"</td><td>"+eur0(v)+"</td></tr>":"";};
-      finHtml="<h2>Financieringsopzet</h2><table><thead><tr><th>Benodigd (investering)</th><th></th></tr></thead><tbody>"+
-        finRij("Koopsom woning",f.koopsom)+finRij("Verbouwing / meerwerk",f.verbouwing)+finRij("Roerende zaken",f.roerend)+
-        finRij("Overdrachtsbelasting ("+fmtNum.format(f.odbPct)+"%)",f.odb)+
-        finRij("Notariskosten",f.notaris)+finRij("Taxatie",f.taxatie)+finRij("Aankoopmakelaar",f.makelaar)+
-        finRij("Hypotheekadvies en bemiddeling",f.advies)+finRij("Bankgarantie / waarborg",f.garantie)+
-        finRij("Bouwkundige keuring",f.keuring)+finRij("Bieden met zekerheid",f.bieden)+
-        finRij("Oversluitkosten (boeterente, royement)",f.oversluit)+finRij("Afkoop erfpacht",f.erfpacht)+
-        finRij("NHG-borgtochtprovisie (0,4%)",f.nhgBedrag)+
-        finRij("Reservering dubbele lasten",f.dubbel)+finRij("Overige kosten",f.overig)+
-        "<tr><td><strong>Totaal benodigd</strong></td><td><strong>"+eur0(f.totaal)+"</strong></td></tr>"+
-        "</tbody></table>"+
-        "<table style='margin-top:10px'><thead><tr><th>Financiering (beschikbaar)</th><th></th></tr></thead><tbody>"+
-        "<tr><td>Hypotheek (som leningdelen)</td><td>"+eur0(f.hyp)+"</td></tr>"+
-        finRij("Overwaarde huidige woning",f.overwaarde)+finRij("Schenking",f.schenking)+finRij("Inbreng eigen geld",f.eigenGeld)+
-        "<tr><td><strong>Totaal beschikbaar</strong></td><td><strong>"+eur0(f.beschikbaar)+"</strong></td></tr>"+
-        "<tr><td><strong>"+(f.saldo>=0?"Overschot / buffer":"Aanvullend eigen geld nodig")+"</strong></td><td><strong>"+eur0(Math.abs(f.saldo))+"</strong></td></tr>"+
-        "</tbody></table><div class='fisc'>Hypotheek t.o.v. waarde (koopsom + verbouwing): "+pct(Math.round(f.ltv*10)/10)+". Roerende zaken en kosten zijn doorgaans niet mee te financieren boven de woningwaarde.</div>";
-    }
     var logoSrc=document.querySelector(".logo-badge img").src;
     var fotoSrc=document.querySelector(".adviseur img").src;
     var html="<!DOCTYPE html><html lang='nl'><head><meta charset='utf-8'><title>"+pdfTitel+"</title><style>"+
-      "*{box-sizing:border-box}body{font-family:Segoe UI,Arial,sans-serif;color:#152647;margin:0;font-size:12.5px;line-height:1.45}"+
-      ".band{background:#152647;color:#fff;padding:20px 34px;display:flex;justify-content:space-between;align-items:center}"+
-      ".band .chip{background:#fff;border-radius:6px;padding:8px 14px}.band img{height:36px;display:block}"+
-      ".band h1{font-size:19px;margin:0;font-weight:600}.band .dat{color:#AFC3DA;font-size:11px;margin-top:3px}"+
-      ".inhoud{padding:24px 34px}"+
-      "h2{font-size:13px;margin:22px 0 8px;color:#1E4193;text-transform:uppercase;letter-spacing:.6px;"+
-      "border-bottom:2px solid #E4442F;padding-bottom:4px;display:inline-block}"+
-      ".blokken{display:flex;gap:12px;margin-bottom:6px}"+
-      ".blok{flex:1;border:1px solid #D9E2EC;border-radius:8px;padding:10px 12px;font-size:12px}"+
-      ".blok-t{font-size:9.5px;text-transform:uppercase;letter-spacing:.5px;color:#5C6B75;margin-bottom:4px}"+
-      ".tot{display:flex;gap:12px;margin:10px 0 4px}"+
-      ".tot div{flex:1;border-radius:8px;padding:11px 12px;background:#EAF3FA}"+
-      ".tot div:first-child{border:2px solid #1E4193}"+
-      ".tot .l{font-size:9.5px;text-transform:uppercase;letter-spacing:.5px;color:#5C6B75}"+
-      ".tot .v{font-size:17px;font-weight:800;margin-top:2px;color:#152647}"+
-      "table{width:100%;border-collapse:collapse}td,th{padding:6px 8px;border-bottom:1px solid #E4EBF2;text-align:right;font-size:11.5px}"+
-      "td:first-child,th:first-child{text-align:left}thead th{background:#EAF3FA;color:#1E4193;font-size:10px;text-transform:uppercase;letter-spacing:.4px}"+
-      ".fisc{font-size:10.5px;color:#5C6B75;margin-top:6px}"+
-      "a{color:#1E4193;text-decoration:none}"+
-      ".chart{width:100%;border:1px solid #E4EBF2;border-radius:8px;margin:4px 0 2px}"+
-      ".chartleg{font-size:10px;color:#5C6B75;margin-bottom:4px}"+
-      ".kantoor{display:flex;gap:14px;align-items:center;background:#FBE7E3;border:1px solid #F2CFC8;border-radius:10px;padding:14px 16px;margin-top:26px}"+
-      ".kantoor img{width:74px;height:74px;border-radius:8px;object-fit:cover}"+
-      ".kantoor .kn{font-weight:800;font-size:13.5px}.kantoor .kr{font-size:10.5px;color:#5C6B75;margin-bottom:4px}"+
-      ".kantoor .kd{font-size:11.5px;line-height:1.6}"+
-      ".disc{margin-top:16px;font-size:9.5px;color:#6B5518;background:#FFF8EB;border:1px solid #EAD9AE;padding:10px 12px;border-radius:8px}"+
-      ".slot{text-align:center;font-size:11px;color:#5C6B75;margin:18px 0 26px;font-style:italic}"+
-      "@media print{.band,.tot div,.kantoor,.disc,thead th{-webkit-print-color-adjust:exact;print-color-adjust:exact}}"+
+      PRINT_STYLE+
       "</style></head><body>"+
       "<div class='band'><div><h1>Hypotheek rekentool Sander Volger - Amsterdam - Noord</h1><div class='dat'>Opgesteld op "+new Date().toLocaleDateString("nl-NL",{day:"numeric",month:"long",year:"numeric"})+"</div></div>"+
       "<div class='chip'><img src='"+logoSrc+"' alt='Hypotheek Visie'></div></div>"+
@@ -1064,17 +1055,66 @@
       "<div><div class='l'>Restschuld einde</div><div class='v'>"+eur0(d.tot[d.nMax-1].saldo)+"</div></div></div>"+
       "<h2>Leningdelen</h2><table><thead><tr><th>Deel</th><th>Vorm</th><th>Bedrag</th><th>Looptijd</th><th>Rentevaste periodes</th><th>Aftrek</th><th>1e bruto p/m</th><th>Restschuld</th></tr></thead><tbody>"+delenRows+"</tbody></table>"+
       "<div class='fisc'>Netto o.b.v. "+(d.aow?"tarieven vanaf AOW-leeftijd":"tarieven tot AOW-leeftijd")+", aftrektarief "+pct(d.aftrekTarief*100)+" en eigenwoningforfait "+eur0(d.ewfJaar)+" per jaar (wettelijke staffel: "+d.ewfLabel+").</div>"+
-      finHtml+
       (chartRestImg?"<h2>Restschuldverloop</h2><img class='chart' src='"+chartRestImg+"' alt='Restschuldverloop'><div class='chartleg'>Donkerblauwe lijn: totale restschuld &middot; gekleurde lijnen: per leningdeel</div>":"")+
       (chartLastImg?"<h2>Maandlastenverloop</h2><img class='chart' src='"+chartLastImg+"' alt='Maandlastenverloop'><div class='chartleg'>Donkerblauw: bruto maandlast &middot; rood: netto indicatief per maand &middot; gestippeld rood: einde renteaftrek</div>":"")+
       "<h2>Jaaroverzicht</h2><table><thead><tr><th>Jaar</th><th>Bruto p/m</th><th>Netto indicatief p/m</th><th>Restschuld eind</th></tr></thead><tbody>"+jaarRows+"</tbody></table>"+(vvNoot?"<div class='fisc'>"+vvNoot+"</div>":"")+
-      "<div class='kantoor'><img src='"+fotoSrc+"' alt='Sander Volger'>"+
-      "<div><div class='kn'>Hypotheek Visie Amsterdam Buikslotermeerplein</div>"+
-      "<div class='kr'>Uw adviseur: Sander Volger</div>"+
-      "<div class='kd'>Buikslotermeerplein 158, 1025 EZ Amsterdam &middot; <a href='tel:0206629866'>020 - 662 98 66</a><br>"+
-      "<a href='mailto:amsterdambuikslotermeerplein@hypotheekvisie.nl'>amsterdambuikslotermeerplein@hypotheekvisie.nl</a> &middot; <a href='https://hypotheekvisie.nl/amsterdam-buikslotermeerplein'>hypotheekvisie.nl/amsterdam-buikslotermeerplein</a><br>"+
-      "Maandag t/m vrijdag 09:00 &ndash; 17:30 &middot; buiten kantooruren en zaterdag op afspraak &middot; online advies mogelijk</div></div></div>"+
+      printKantoor(fotoSrc)+
       "<div class='disc'><strong>Dit is geen advies &mdash; alleen een snelle indicatieve berekening.</strong> Voor advies komt u bij ons langs op kantoor; wij geven pas advies na het tekenen van de opdracht tot dienstverlening. Netto maandlasten zijn indicatief en afhankelijk van inkomen, vermogen en teruggaaf; wat u terugontvangt bepaalt de Belastingdienst op basis van uw gegevens. Vereenvoudigd netto-model (renteaftrek gemaximeerd op het wettelijke aftrektarief, eigenwoningforfait volgens de wettelijke staffel o.b.v. WOZ). De renteaftrektermijn per leningdeel wordt meegenomen zoals ingevoerd. Geen rekening met bijleenregeling, Wet Hillen-afbouw, risico-opslagen, NHG of toekomstige wet- en rentewijzigingen. Aan deze berekening kunnen geen rechten worden ontleend; dit is geen persoonlijk advies in de zin van de Wft.</div>"+
+      "<div class='slot'>Je woont toch om te leven!</div>"+
+      "</div><script>window.onload=function(){window.print();}<\/script></body></html>";
+    var w=window.open("","_blank");
+    if(!w){alert("Pop-up geblokkeerd. Sta pop-ups toe om te kunnen afdrukken.");return;}
+    w.document.write(html);w.document.close();
+  }
+
+  function printFin(){
+    if(!laatste){bereken();if(!laatste)return;}
+    var d=laatste,f=d.fin;
+    if(!f||(f.koopsom<=0&&f.verbouwing<=0)){alert("Vul eerst een koopsom in en klik op Bereken financieringsopzet.");return;}
+    var finRij=function(l,v){return v>0?"<tr><td>"+l+"</td><td>"+eur0(v)+"</td></tr>":"";};
+    var pdfTitel=["Financieringsopzet","geen advies",d.klantNaam,d.klantAdres,
+      new Date().toLocaleDateString("nl-NL")].filter(Boolean).join(" - ").replace(/,/g,"");
+    var logoSrc=document.querySelector(".logo-badge img").src;
+    var fotoSrc=document.querySelector(".adviseur img").src;
+    var klantBlok=(d.klantNaam||d.klantAdres)?
+      "<div class='blok'><div class='blok-t'>Klant</div><strong>"+(d.klantNaam||"&mdash;")+"</strong><br>"+(d.klantAdres||"")+"</div>":"";
+    var noten="Hypotheek t.o.v. waarde (koopsom + verbouwing): "+pct(Math.round(f.ltv*10)/10)+".";
+    if(f.roerend>0)noten+=" Roerende zaken zijn doorgaans niet mee te financieren in de hypotheek.";
+    if(f.nhgGrensOver)noten+=" Let op: koopsom plus verbouwing ligt boven de NHG-kostengrens van \u20ac 470.000 (\u20ac 498.200 met energiebesparende voorzieningen); NHG is dan doorgaans niet mogelijk.";
+    var html="<!DOCTYPE html><html lang='nl'><head><meta charset='utf-8'><title>"+pdfTitel+"</title><style>"+
+      PRINT_STYLE+
+      "</style></head><body>"+
+      "<div class='band'><div><h1>Financieringsopzet</h1><div class='dat'>Opgesteld op "+new Date().toLocaleDateString("nl-NL",{day:"numeric",month:"long",year:"numeric"})+"</div></div>"+
+      "<div class='chip'><img src='"+logoSrc+"' alt='Hypotheek Visie'></div></div>"+
+      "<div class='inhoud'>"+
+      "<div class='blokken'>"+klantBlok+
+      "<div class='blok'><div class='blok-t'>Kern</div>"+
+      "Totaal benodigd: <strong>"+eur0(f.totaal)+"</strong><br>"+
+      "Totaal beschikbaar: <strong>"+eur0(f.beschikbaar)+"</strong><br>"+
+      (f.saldo>=0?"Overschot / buffer: ":"Aanvullend eigen geld nodig: ")+"<strong>"+eur0(Math.abs(f.saldo))+"</strong></div></div>"+
+      "<h2>Benodigd (investering)</h2><table><tbody>"+
+      finRij("Koopsom woning",f.koopsom)+finRij("Verbouwing / meerwerk",f.verbouwing)+finRij("Roerende zaken",f.roerend)+
+      finRij("Overdrachtsbelasting ("+fmtNum.format(f.odbPct)+"%)",f.odb)+
+      finRij("Notariskosten",f.notaris)+finRij("Taxatie",f.taxatie)+finRij("Aankoopmakelaar",f.makelaar)+
+      finRij("Hypotheekadvies en bemiddeling",f.advies)+finRij("Bankgarantie / waarborg",f.garantie)+
+      finRij("Bouwkundige keuring",f.keuring)+finRij("Bieden met zekerheid",f.bieden)+
+      finRij("Oversluitkosten (boeterente, royement)",f.oversluit)+finRij("Afkoop erfpacht",f.erfpacht)+
+      finRij("NHG-borgtochtprovisie (0,4%)",f.nhgBedrag)+
+      finRij("Reservering dubbele lasten",f.dubbel)+finRij("Overige kosten",f.overig)+
+      "<tr><td><strong>Totaal benodigd</strong></td><td><strong>"+eur0(f.totaal)+"</strong></td></tr>"+
+      "</tbody></table>"+
+      "<h2>Financiering (beschikbaar)</h2><table><tbody>"+
+      "<tr><td>Hypotheek (som leningdelen)</td><td>"+eur0(f.hyp)+"</td></tr>"+
+      finRij("Overwaarde huidige woning",f.overwaarde)+finRij("Schenking",f.schenking)+finRij("Inbreng eigen geld",f.eigenGeld)+
+      "<tr><td><strong>Totaal beschikbaar</strong></td><td><strong>"+eur0(f.beschikbaar)+"</strong></td></tr>"+
+      "<tr><td><strong>"+(f.saldo>=0?"Overschot / buffer":"Aanvullend eigen geld nodig")+"</strong></td><td><strong>"+eur0(Math.abs(f.saldo))+"</strong></td></tr>"+
+      "</tbody></table>"+
+      "<div class='fisc'>"+noten+"</div>"+
+      printKantoor(fotoSrc)+
+      "<div class='disc'><strong>Dit is geen advies &mdash; alleen een snelle indicatieve opzet.</strong> "+
+      "Voor advies komt u bij ons langs op kantoor; wij geven pas advies na het tekenen van de opdracht tot dienstverlening. "+
+      "Bedragen zijn indicatief; werkelijke kosten (notaris, taxatie, boeterente, NHG) kunnen afwijken en de maximale hypotheek hangt af van inkomen en woningwaarde. "+
+      "Aan deze opzet kunnen geen rechten worden ontleend; dit is geen persoonlijk advies in de zin van de Wft.</div>"+
       "<div class='slot'>Je woont toch om te leven!</div>"+
       "</div><script>window.onload=function(){window.print();}<\/script></body></html>";
     var w=window.open("","_blank");
@@ -1343,7 +1383,7 @@
     document.getElementById("fileUpload").click();
   });
   document.getElementById("btnMailFin").addEventListener("click",mailBerekening);
-  document.getElementById("btnPrintFin").addEventListener("click",printRapport);
+  document.getElementById("btnPrintFin").addEventListener("click",printFin);
   document.getElementById("btnHypGelijk").addEventListener("click",stelHypGelijk);
   document.getElementById("btnDownload").addEventListener("click",downloadState);
   document.getElementById("btnUpload").addEventListener("click",function(){
