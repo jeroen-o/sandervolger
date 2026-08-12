@@ -218,9 +218,9 @@
   .btn-primair{margin-top:16px;width:100%;background:var(--hv-blauw);color:#fff;border:none;
     border-radius:7px;padding:12px;font-size:1rem;font-weight:700;cursor:pointer}
   .btn-primair:hover{background:var(--hv-blauw-donker)}
-  .btn-print{margin-top:8px;width:100%;background:#fff;color:var(--hv-navy);border:1px solid var(--hv-lijn);
-    border-radius:7px;padding:10px;font-size:.9rem;font-weight:600;cursor:pointer}
-  .btn-print:hover{background:var(--hv-bg)}
+  .btn-print{margin-top:8px;width:100%;background:var(--hv-blauw);color:#fff;border:none;
+    border-radius:7px;padding:11px;font-size:.95rem;font-weight:700;cursor:pointer}
+  .btn-print:hover{background:var(--hv-blauw-donker)}
   .btn-rij{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
   .btn-sec{flex:1 1 45%;background:#fff;color:var(--hv-blauw);border:1px solid var(--hv-blauw);
     border-radius:7px;padding:9px 4px;font-size:.8rem;font-weight:700;cursor:pointer}
@@ -351,13 +351,13 @@
         </div>
         <div>
           <label for="aow">AOW-leeftijd bereikt?</label>
-          <select id="aow"><option value="nee">Nee — tot AOW-leeftijd</option><option value="ja">Ja — AOW-leeftijd bereikt</option></select>
+          <select id="aow"><option value="nee">Nee</option><option value="ja">Ja</option></select>
           <div class="hint">Bepaalt het tarief in schijf 1</div>
         </div>
       </div>
 
       <details class="fiscaal">
-        <summary>Fiscale uitgangspunten (2026, aanpasbaar)</summary>
+        <summary>Fiscale uitgangspunten (aanpasbaar)</summary>
         <div class="rij2">
           <div><label>Schijf 1 tot AOW (%)</label><input type="text" id="fT1" value="35,75"></div>
           <div><label>Schijf 1 vanaf AOW (%)</label><input type="text" id="fT1aow" value="17,85"></div>
@@ -803,7 +803,8 @@
     c.width=cw;c.height=compact?300:340;
     var W=c.width,H=c.height,pl=compact?56:76,pr=10,pt=14,pb=32;
     ctx.clearRect(0,0,W,H);
-    var maxY=d.totBedrag*1.02,n=d.nMax,jaren=Math.round(n/12);
+    var stapY=Math.max(10000,Math.ceil(d.totBedrag/4/10000)*10000);
+    var maxY=stapY*4,n=d.nMax,jaren=Math.round(n/12);
     function X(m){return pl+(W-pl-pr)*m/n;}
     function Y(v){return pt+(H-pt-pb)*(1-v/maxY);}
     function lbl(v){
@@ -820,6 +821,13 @@
     ctx.textAlign="center";
     var stap=jaren<=12?2:(compact?10:5);
     for(var jr=0;jr<=jaren;jr+=stap)ctx.fillText((compact?"jr ":"jaar ")+jr,X(jr*12),H-10);
+    var yStart=Y(d.totBedrag);
+    ctx.save();ctx.strokeStyle="#152647";ctx.setLineDash([2,3]);ctx.lineWidth=1;
+    if(maxY-d.totBedrag>stapY*0.02){ctx.beginPath();ctx.moveTo(pl,yStart);ctx.lineTo(W-pr,yStart);ctx.stroke();}
+    ctx.fillStyle="#152647";ctx.textAlign="left";
+    ctx.font="bold "+(compact?"10px":"11px")+" 'Segoe UI', sans-serif";
+    ctx.fillText("aanvangsschuld "+eur0(d.totBedrag),pl+6,Math.max(yStart-6,pt+10));
+    ctx.restore();ctx.setLineDash([]);
     d.delen.forEach(function(x){
       ctx.strokeStyle=x.kleur;ctx.lineWidth=1.8;ctx.beginPath();
       ctx.moveTo(X(0),Y(x.bedrag));
@@ -843,7 +851,8 @@
     ctx.clearRect(0,0,W,H);
     var maxY=0;
     for(var i=0;i<d.nMax;i++)if(d.tot[i].bruto>maxY)maxY=d.tot[i].bruto;
-    maxY*=1.08;
+    var stapY=Math.max(50,Math.ceil(maxY*1.05/4/50)*50);
+    maxY=stapY*4;
     var n=d.nMax,jaren=Math.round(n/12);
     function X(m){return pl+(W-pl-pr)*m/n;}
     function Y(v){return pt+(H-pt-pb)*(1-v/maxY);}
@@ -907,9 +916,16 @@
     var vvNoot=Object.keys(vervalP).map(function(jr){return "\u25b2 Vanaf jaar "+jr+" vervalt de renteaftrek van leningdeel "+vervalP[jr].join(" en ");}).join(" \u00b7 ");
     var klantBlok=(d.klantNaam||d.klantAdres)?
       "<div class='blok'><div class='blok-t'>Klant</div><strong>"+(d.klantNaam||"&mdash;")+"</strong><br>"+(d.klantAdres||"")+"</div>":"";
+    var pdfTitel=["Hypotheekberekening","geen advies",d.klantNaam,d.klantAdres,
+      new Date().toLocaleDateString("nl-NL")].filter(Boolean).join(" - ").replace(/,/g,"");
+    var chartRestImg="",chartLastImg="";
+    try{
+      var cR=document.getElementById("chartRest");if(cR)chartRestImg=cR.toDataURL("image/png");
+      var cL=document.getElementById("chartLast");if(cL)chartLastImg=cL.toDataURL("image/png");
+    }catch(e){}
     var logoSrc=document.querySelector(".logo-badge img").src;
     var fotoSrc=document.querySelector(".adviseur img").src;
-    var html="<!DOCTYPE html><html lang='nl'><head><meta charset='utf-8'><title>Hypotheekberekening</title><style>"+
+    var html="<!DOCTYPE html><html lang='nl'><head><meta charset='utf-8'><title>"+pdfTitel+"</title><style>"+
       "*{box-sizing:border-box}body{font-family:Segoe UI,Arial,sans-serif;color:#152647;margin:0;font-size:12.5px;line-height:1.45}"+
       ".band{background:#152647;color:#fff;padding:20px 34px;display:flex;justify-content:space-between;align-items:center}"+
       ".band .chip{background:#fff;border-radius:6px;padding:8px 14px}.band img{height:36px;display:block}"+
@@ -922,12 +938,15 @@
       ".blok-t{font-size:9.5px;text-transform:uppercase;letter-spacing:.5px;color:#5C6B75;margin-bottom:4px}"+
       ".tot{display:flex;gap:12px;margin:10px 0 4px}"+
       ".tot div{flex:1;border-radius:8px;padding:11px 12px;background:#EAF3FA}"+
-      ".tot div:first-child{background:#1E4193;color:#fff}.tot div:first-child .l{color:#AFC3DA}"+
+      ".tot div:first-child{border:2px solid #1E4193}"+
       ".tot .l{font-size:9.5px;text-transform:uppercase;letter-spacing:.5px;color:#5C6B75}"+
-      ".tot .v{font-size:17px;font-weight:800;margin-top:2px}"+
+      ".tot .v{font-size:17px;font-weight:800;margin-top:2px;color:#152647}"+
       "table{width:100%;border-collapse:collapse}td,th{padding:6px 8px;border-bottom:1px solid #E4EBF2;text-align:right;font-size:11.5px}"+
       "td:first-child,th:first-child{text-align:left}thead th{background:#EAF3FA;color:#1E4193;font-size:10px;text-transform:uppercase;letter-spacing:.4px}"+
       ".fisc{font-size:10.5px;color:#5C6B75;margin-top:6px}"+
+      "a{color:#1E4193;text-decoration:none}"+
+      ".chart{width:100%;border:1px solid #E4EBF2;border-radius:8px;margin:4px 0 2px}"+
+      ".chartleg{font-size:10px;color:#5C6B75;margin-bottom:4px}"+
       ".kantoor{display:flex;gap:14px;align-items:center;background:#FBE7E3;border:1px solid #F2CFC8;border-radius:10px;padding:14px 16px;margin-top:26px}"+
       ".kantoor img{width:74px;height:74px;border-radius:8px;object-fit:cover}"+
       ".kantoor .kn{font-weight:800;font-size:13.5px}.kantoor .kr{font-size:10.5px;color:#5C6B75;margin-bottom:4px}"+
@@ -950,12 +969,14 @@
       "<div><div class='l'>Restschuld einde</div><div class='v'>"+eur0(d.tot[d.nMax-1].saldo)+"</div></div></div>"+
       "<h2>Leningdelen</h2><table><thead><tr><th>Deel</th><th>Vorm</th><th>Bedrag</th><th>Looptijd</th><th>Rentevaste periodes</th><th>Aftrek</th><th>1e bruto p/m</th><th>Restschuld</th></tr></thead><tbody>"+delenRows+"</tbody></table>"+
       "<div class='fisc'>Netto o.b.v. "+(d.aow?"tarieven vanaf AOW-leeftijd":"tarieven tot AOW-leeftijd")+", aftrektarief "+pct(d.aftrekTarief*100)+" en eigenwoningforfait "+eur0(d.ewfJaar)+" per jaar (wettelijke staffel: "+d.ewfLabel+").</div>"+
+      (chartRestImg?"<h2>Restschuldverloop</h2><img class='chart' src='"+chartRestImg+"' alt='Restschuldverloop'><div class='chartleg'>Donkerblauwe lijn: totale restschuld &middot; gekleurde lijnen: per leningdeel</div>":"")+
+      (chartLastImg?"<h2>Maandlastenverloop</h2><img class='chart' src='"+chartLastImg+"' alt='Maandlastenverloop'><div class='chartleg'>Donkerblauw: bruto maandlast &middot; rood: netto indicatief per maand &middot; gestippeld rood: einde renteaftrek</div>":"")+
       "<h2>Jaaroverzicht</h2><table><thead><tr><th>Jaar</th><th>Bruto p/m</th><th>Netto indicatief p/m</th><th>Restschuld eind</th></tr></thead><tbody>"+jaarRows+"</tbody></table>"+(vvNoot?"<div class='fisc'>"+vvNoot+"</div>":"")+
       "<div class='kantoor'><img src='"+fotoSrc+"' alt='Sander Volger'>"+
       "<div><div class='kn'>Hypotheek Visie Amsterdam Buikslotermeerplein</div>"+
       "<div class='kr'>Uw adviseur: Sander Volger</div>"+
-      "<div class='kd'>Buikslotermeerplein 158, 1025 EZ Amsterdam &middot; 020 - 662 98 66<br>"+
-      "amsterdambuikslotermeerplein@hypotheekvisie.nl &middot; hypotheekvisie.nl/amsterdam-buikslotermeerplein<br>"+
+      "<div class='kd'>Buikslotermeerplein 158, 1025 EZ Amsterdam &middot; <a href='tel:0206629866'>020 - 662 98 66</a><br>"+
+      "<a href='mailto:amsterdambuikslotermeerplein@hypotheekvisie.nl'>amsterdambuikslotermeerplein@hypotheekvisie.nl</a> &middot; <a href='https://hypotheekvisie.nl/amsterdam-buikslotermeerplein'>hypotheekvisie.nl/amsterdam-buikslotermeerplein</a><br>"+
       "Maandag t/m vrijdag 09:00 &ndash; 17:30 &middot; buiten kantooruren en zaterdag op afspraak &middot; online advies mogelijk</div></div></div>"+
       "<div class='disc'><strong>Dit is geen advies &mdash; alleen een snelle indicatieve berekening.</strong> Voor advies komt u bij ons langs op kantoor; wij geven pas advies na het tekenen van de opdracht tot dienstverlening. Netto maandlasten zijn indicatief en afhankelijk van inkomen, vermogen en teruggaaf; wat u terugontvangt bepaalt de Belastingdienst op basis van uw gegevens. Vereenvoudigd netto-model (renteaftrek gemaximeerd op het wettelijke aftrektarief, eigenwoningforfait volgens de wettelijke staffel o.b.v. WOZ). De renteaftrektermijn per leningdeel wordt meegenomen zoals ingevoerd. Geen rekening met bijleenregeling, Wet Hillen-afbouw, risico-opslagen, NHG of toekomstige wet- en rentewijzigingen. Aan deze berekening kunnen geen rechten worden ontleend; dit is geen persoonlijk advies in de zin van de Wft.</div>"+
       "<div class='slot'>Je woont toch om te leven!</div>"+
