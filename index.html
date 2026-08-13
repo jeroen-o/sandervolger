@@ -493,6 +493,12 @@
 #paneelMax .btn-opl:hover{filter:brightness(1.15)}
 
 
+
+/* --- veldenraster: onderlijn-uitlijning herstellen (lek van buitenste .grid/label) --- */
+#paneelMax .grid{align-items:stretch}
+#paneelMax label{margin:0}
+#paneelMax label.f>input,#paneelMax label.f>select{margin-top:auto}
+#paneelMax label.f .hint,#paneelMax .leeftijd{margin-bottom:2px}
 /* --- uitlijning binnen het tabblad: geen dubbele marges --- */
 #paneelMax .wrap{max-width:none;padding:0 !important}
 #paneelMax header.top{padding:20px 24px}
